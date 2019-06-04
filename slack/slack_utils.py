@@ -59,7 +59,7 @@ def create_channel(channel_name):
 
 def archive_channel(channel_id):
     response = slack_client.api_call(
-        "channel.archive",
+        "channels.archive",
         channel=channel_id,
     )
 
