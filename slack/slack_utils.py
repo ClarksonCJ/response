@@ -57,6 +57,17 @@ def create_channel(channel_name):
 
     return response['channel']['id']
 
+def archive_channel(channel_id):
+    response = slack_client.api_call(
+        "channel.archive",
+        channel=channel_id,
+    )
+
+    if not response.get("ok", False):
+        raise SlackError(f"Failed to archive channel {channel_id}: {response['error']}")
+    
+    return response['ok']
+
 
 def get_or_create_channel(channel_name):
     try:
