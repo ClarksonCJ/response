@@ -65,7 +65,7 @@ def archive_channel(channel_id):
 
     if not response.get("ok", False):
         raise SlackError(f"Failed to archive channel {channel_id}: {response['error']}")
-    
+
     return response['ok']
 
 

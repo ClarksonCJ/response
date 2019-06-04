@@ -19,7 +19,6 @@ def handle_close_incident(incident: Incident, user_id: str, message: json, trigg
         if CommsChannel.objects.filter(incident=incident).exists():
             chan = CommsChannel.objects.get(incident=incident)
             if chan is not None:
-                print(chan.channel_id)
                 leave_channel(chan.channel_id)
                 archive_channel(chan.channel_id)
                 incident.save()
