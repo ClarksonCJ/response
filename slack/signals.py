@@ -20,7 +20,11 @@ def update_headline_after_incident_save(sender, instance, **kwargs):
         headline_post = HeadlinePost.objects.get(
             incident=instance
         )
-        
+        if instance.lead is not None:
+            if CommsChannel.objects.filter(incident=instance).exists():
+                chan = CommsChannel.objects.get(incident=instance)
+                invite_user_to_channel(instance.lead, chan.channel_id)
+
         headline_post.update_in_slack()
 
     except HeadlinePost.DoesNotExist:
@@ -35,9 +39,4 @@ def update_headline_after_save(sender, instance, **kwargs):
     Reflect changes to headline posts in slack
 
     """
-    if instance.lead is not None:
-        if CommsChannel.objects.filter(incident=instance).exists():
-            chan = CommsChannel.objects.get(incident=instance)
-            invite_user_to_channel(instance.lead, chan.channel_id)
-
     instance.update_in_slack()
