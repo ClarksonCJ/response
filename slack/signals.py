@@ -3,8 +3,8 @@ from django.core.signals import request_finished
 from django.dispatch import receiver
 
 from core.models import Incident
-from slack.models import HeadlinePost
-
+from slack.models import HeadlinePost, CommsChannel
+from slack.slack_utils import invite_user_to_channel
 from time import sleep
 
 
@@ -20,6 +20,7 @@ def update_headline_after_incident_save(sender, instance, **kwargs):
         headline_post = HeadlinePost.objects.get(
             incident=instance
         )
+        
         headline_post.update_in_slack()
 
     except HeadlinePost.DoesNotExist:
@@ -34,4 +35,9 @@ def update_headline_after_save(sender, instance, **kwargs):
     Reflect changes to headline posts in slack
 
     """
+    if instance.lead is not None:
+        if CommsChannel.objects.filter(incident=instance).exists():
+            chan = CommsChannel.objects.get(incident=instance)
+            invite_user_to_channel(instance.lead, chan.channel_id)
+
     instance.update_in_slack()
